@@ -2,3 +2,4 @@
 .gradle
 target
 media.service.fonctionnel.iml
+src/main/resources/local
