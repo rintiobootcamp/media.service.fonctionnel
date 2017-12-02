@@ -7,20 +7,12 @@ import com.bootcamp.commons.models.Criterias;
 import com.bootcamp.commons.models.Rule;
 import com.bootcamp.crud.MediaCRUD;
 import com.bootcamp.entities.Media;
-import com.bootcamp.utils.MediaAppUtils;
-
-import java.io.File;
 import java.io.IOException;
 
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,13 +30,13 @@ public class MediaService implements DatabaseConstants {
     }
 
 
-    public int saveFile(MultipartFile file, int entityId, String entityType) throws SQLException, IOException {
+    public Media saveFile(MultipartFile file, int entityId, EntityType entityType) throws SQLException, IOException {
         Media media = diskStorageService.save(file);
-        media.setType(entityType);
+        media.setEntityType(entityType);
         media.setEntityId(entityId);
         create(media);
 
-        return media.getId();
+        return media;
     }
 
     public void update(Media media) throws SQLException {

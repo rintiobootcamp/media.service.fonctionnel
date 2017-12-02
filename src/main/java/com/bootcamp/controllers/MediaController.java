@@ -31,14 +31,14 @@ public class MediaController {
     MediaService mediaService;
 
 
-    @RequestMapping(method = RequestMethod.POST, value = "/{entityId}/{entityType}")
+    @RequestMapping(method = RequestMethod.POST, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
-    public ResponseEntity<Integer> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId,  @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
+    public ResponseEntity<Media> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId,  @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
+        EntityType type = EntityType.valueOf(entityType);
+        Media id = mediaService.saveFile(file, entityId, type);
 
-        int id = mediaService.saveFile(file, entityId, entityType);
-
-        return new ResponseEntity<Integer>(id, HttpStatus.OK);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")

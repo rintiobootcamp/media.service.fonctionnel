@@ -18,20 +18,20 @@ import java.io.IOException;
 @Component
 public class DiskStorageService implements Storage {
 
-    @Value("media.location")
+    @Value("${media.location}")
     String mediaDirectory;
 
     @Override
     public Media save(MultipartFile file) throws IOException {
         Media media = new Media();
         media.setOriginalName(file.getOriginalFilename());
-        media.setInternalName(this.getInternalFilename(media.getOriginalName()));
+        media.setInternalName(this.getInternalFilename(file.getOriginalFilename()));
         media.setType(file.getContentType());
-        media.setLien(file.getOriginalFilename());
+        media.setLien(mediaDirectory+media.getInternalName());
         media.setDateCreation(System.currentTimeMillis());
         media.setDateMiseAJour(System.currentTimeMillis());
         
-        File savedFile = new File(mediaDirectory+media.getInternalName());
+        File savedFile = new File(media.getLien());
         file.transferTo(savedFile);
         return media;
     }
@@ -43,6 +43,6 @@ public class DiskStorageService implements Storage {
 
     private String getInternalFilename(String filename){
       String extension = FilenameUtils.getExtension(filename);
-      return MediaAppUtils.generateFileName()+extension;
+      return MediaAppUtils.generateFileName()+"."+extension;
     }
 }
