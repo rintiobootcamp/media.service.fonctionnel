@@ -79,7 +79,7 @@ public class MediaController {
         return new ResponseEntity<List<Media>>(medias, httpStatus);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{entityId}/{entityType}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a comments", notes = "Read a comments")
     public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityTypeName) {

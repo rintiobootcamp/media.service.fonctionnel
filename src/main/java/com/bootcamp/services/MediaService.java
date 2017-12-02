@@ -12,6 +12,7 @@ import java.io.IOException;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,11 +64,11 @@ public class MediaService implements DatabaseConstants {
     }
 
     public List<Media> getByEntity(int entityId, EntityType entityType) throws SQLException {
-        Criterias criterias = new Criterias();
-        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
-        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
+        List<Criteria> criterias = new ArrayList<Criteria>();
+        criterias.add(new Criteria(new Rule("entityId", "=", entityId), "AND"));
+        criterias.add(new Criteria(new Rule("entityType", "=", entityType), null));
 
-        return MediaCRUD.read();
+        return MediaCRUD.getByCriteria(criterias);
     }
 
 }
