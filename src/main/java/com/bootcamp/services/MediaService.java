@@ -5,12 +5,13 @@ import com.bootcamp.commons.enums.EntityType;
 import com.bootcamp.commons.models.Criteria;
 import com.bootcamp.commons.models.Criterias;
 import com.bootcamp.commons.models.Rule;
-import com.bootcamp.constants.AppConstant;
 import com.bootcamp.crud.MediaCRUD;
 import com.bootcamp.entities.Media;
 import com.bootcamp.utils.MediaAppUtils;
+
 import java.io.File;
 import java.io.IOException;
+
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,24 +30,17 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class MediaService implements DatabaseConstants {
 
+    @Autowired
+    DiskStorageService diskStorageService;
+
     public void create(Media media) throws SQLException {
         MediaCRUD.create(media);
     }
-    
-//    public String saveFile(MultipartFile file) throws SQLException {
-//        return file.getOriginalFilename();
-//    }
 
-    public int saveFile(MultipartFile file) throws SQLException {
-        //DiskStorageService diskStorageService = new DiskStorageService();
-        Media media = new Media();
-        try {
-            //media = diskStorageService.save(file);
-            media = this.save(file);
-            this.create(media);
-        } catch (IOException ex) {
-            Logger.getLogger(MediaService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+    public int saveFile(MultipartFile file) throws SQLException, IOException {
+        Media media = diskStorageService.save(file);
+        create(media);
 
         return media.getId();
     }
@@ -74,31 +69,11 @@ public class MediaService implements DatabaseConstants {
     }
 
     public List<Media> getByEntity(int entityId, EntityType entityType) throws SQLException {
-        List<Criteria> criterias = new ArrayList<Criteria>();
-        criterias.add(new Criteria(new Rule("entityId", "=", 3), "AND"));
-        criterias.add(new Criteria(new Rule("entityType", "=", EntityType.PROJET), null));
-        return MediaCRUD.getByCriteria(criterias);
-    }
-    
-    public Media save(MultipartFile file) throws IOException {
-        Media media = new Media();
-        media.setOriginalName(file.getOriginalFilename());
-        media.setInternalName(this.getInternalFilename(media.getOriginalName()));
-        media.setType(file.getContentType());
-        media.setLien(file.getOriginalFilename());
-        media.setDateCreation(System.currentTimeMillis());
-        media.setDateMiseAJour(System.currentTimeMillis());
-        
-        String extension = file.getOriginalFilename().split(".")[0];
-        
-        File savedFile = new File(AppConstant.FILE_DIRECTORY+media.getInternalName());
-        file.transferTo(savedFile);
-        return media;
-    }
+        Criterias criterias = new Criterias();
+        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
+        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
 
-    private String getInternalFilename(String filename){
-      String extension = FilenameUtils.getExtension(filename);
-      return MediaAppUtils.generateFileName()+extension;
+        return MediaCRUD.read();
     }
 
 }

@@ -27,41 +27,7 @@ public class MediaController {
 
     @Autowired
     MediaService mediaService;
-//    @Autowired
-//    HttpServletRequest request;
 
-//    @RequestMapping(method = RequestMethod.POST, value = "/")
-//    @ApiVersions({"1.0"})
-//    @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
-//    public ResponseEntity<String> create(@RequestParam("file") MultipartFile file) {
-//        String id = "";
-//        HttpStatus httpStatus = null;
-//
-//        try {
-//            id = mediaService.saveFile(file);
-//            httpStatus = HttpStatus.OK;
-//        }catch (SQLException ex){
-//            Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
-//            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-//        }
-//
-//        return new ResponseEntity<>(id, httpStatus);
-//    }
-    public ResponseEntity<Integer> create(@RequestParam("file") MultipartFile file) {
-        int id = -1;
-        HttpStatus httpStatus = null;
-
-        try {
-            id = mediaService.saveFile(file);
-            httpStatus = HttpStatus.OK;
-        }catch (SQLException ex){
-            Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-
-        return new ResponseEntity<Integer>(id, httpStatus);
-    }
-    
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a media", notes = "Read a media")
@@ -100,7 +66,7 @@ public class MediaController {
         return new ResponseEntity<List<Media>>(medias, httpStatus);
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "/{entityType}/{entityId}")
+    @RequestMapping(method = RequestMethod.GET, value = "/{entityId}/{entityType}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a comments", notes = "Read a comments")
     public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) {
