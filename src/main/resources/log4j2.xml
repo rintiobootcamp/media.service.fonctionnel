@@ -8,7 +8,7 @@
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
 
-        <RollingRandomAccessFile name="appFile" fileName="${sys:log.path:-logs}/rest-service-std.log" filePattern="${sys:log.path:-logs}/rest-service-std-%d{yyyy-MM-dd}-%i.gz">
+        <RollingRandomAccessFile name="appFile" fileName="${sys:log.path:-logs}/media-service-fonctionnel-std.log" filePattern="${sys:log.path:-logs}/media-service-fonctionnel-std-%d{yyyy-MM-dd}-%i.gz">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="25 MB" />
@@ -16,13 +16,13 @@
             </Policies>
             <DefaultRolloverStrategy max="7">
                 <Delete basePath="${sys:log.path:-logs}" maxDepth="2">
-                    <IfFileName glob="*rest-service-*.gz" />
+                    <IfFileName glob="*-service-*.gz" />
                     <IfLastModified age="14d" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingRandomAccessFile>
 
-        <RollingRandomAccessFile name="appErrorFile" fileName="${sys:log.path:-logs}/rest-service-error.log" filePattern="${sys:log.path:-logs}/rest-service-error-%d{yyyy-MM-dd}-%i.gz">
+        <RollingRandomAccessFile name="appErrorFile" fileName="${sys:log.path:-logs}/media-service-fonctionnel-error.log" filePattern="${sys:log.path:-logs}/media-service-fonctionnel-error-%d{yyyy-MM-dd}-%i.gz">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="25 MB" />
@@ -30,7 +30,7 @@
             </Policies>
             <DefaultRolloverStrategy max="7">
                 <Delete basePath="${sys:log.path:-logs}" maxDepth="2">
-                    <IfFileName glob="*rest-service-*.gz" />
+                    <IfFileName glob="*media-service-fonctionnel-*.gz" />
                     <IfLastModified age="14d" />
                 </Delete>
             </DefaultRolloverStrategy>
