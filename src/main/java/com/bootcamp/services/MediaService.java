@@ -31,7 +31,7 @@ public class MediaService implements DatabaseConstants {
     }
 
 
-    public Media saveFile(MultipartFile file, int entityId, EntityType entityType) throws SQLException, IOException {
+    public Media saveFile(MultipartFile file, int entityId, String entityType) throws SQLException, IOException {
         Media media = diskStorageService.save(file);
         media.setEntityType(entityType);
         media.setEntityId(entityId);
@@ -63,12 +63,12 @@ public class MediaService implements DatabaseConstants {
         return MediaCRUD.read();
     }
 
-    public List<Media> getByEntity(int entityId, EntityType entityType) throws SQLException {
-        List<Criteria> criterias = new ArrayList<Criteria>();
-        criterias.add(new Criteria(new Rule("entityId", "=", entityId), "AND"));
-        criterias.add(new Criteria(new Rule("entityType", "=", entityType), null));
+    public List<Media> getByEntity(int entityId, String entityType) throws SQLException {
+        Criterias criterias = new Criterias();
+        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
+        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
 
-        return MediaCRUD.getByCriteria(criterias);
+        return MediaCRUD.read(criterias);
     }
 
 }

@@ -35,8 +35,7 @@ public class MediaController {
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
     public ResponseEntity<Media> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId,  @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
-        EntityType type = EntityType.valueOf(entityType);
-        Media id = mediaService.saveFile(file, entityId, type);
+        Media id = mediaService.saveFile(file, entityId, entityType);
 
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
@@ -82,8 +81,7 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a comments", notes = "Read a comments")
-    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityTypeName) {
-        EntityType entityType = EntityType.valueOf(entityTypeName);
+    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) {
         List<Media> medias = new ArrayList<Media>();
         HttpStatus httpStatus = null;
 
