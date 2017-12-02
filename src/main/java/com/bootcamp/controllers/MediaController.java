@@ -12,11 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -27,6 +29,17 @@ public class MediaController {
 
     @Autowired
     MediaService mediaService;
+
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{entityId}/{entityType}")
+    @ApiVersions({"1.0"})
+    @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
+    public ResponseEntity<Integer> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId,  @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
+
+        int id = mediaService.saveFile(file, entityId, entityType);
+
+        return new ResponseEntity<Integer>(id, HttpStatus.OK);
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     @ApiVersions({"1.0"})
@@ -39,7 +52,7 @@ public class MediaController {
         try {
             media = mediaService.read(id);
             httpStatus = HttpStatus.OK;
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
@@ -58,14 +71,14 @@ public class MediaController {
         try {
             medias = mediaService.getAll();
             httpStatus = HttpStatus.OK;
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         return new ResponseEntity<List<Media>>(medias, httpStatus);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/{entityId}/{entityType}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a comments", notes = "Read a comments")
@@ -77,7 +90,7 @@ public class MediaController {
         try {
             medias = mediaService.getByEntity(entityId, entityType);
             httpStatus = HttpStatus.OK;
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }

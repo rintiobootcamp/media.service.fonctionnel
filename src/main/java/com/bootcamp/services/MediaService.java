@@ -38,8 +38,10 @@ public class MediaService implements DatabaseConstants {
     }
 
 
-    public int saveFile(MultipartFile file) throws SQLException, IOException {
+    public int saveFile(MultipartFile file, int entityId, String entityType) throws SQLException, IOException {
         Media media = diskStorageService.save(file);
+        media.setType(entityType);
+        media.setEntityId(entityId);
         create(media);
 
         return media.getId();
