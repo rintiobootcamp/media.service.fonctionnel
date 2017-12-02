@@ -69,13 +69,13 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET, value = "/{entityId}/{entityType}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a comments", notes = "Read a comments")
-    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) {
-        EntityType entite = EntityType.valueOf(entityType);
+    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityTypeName) {
+        EntityType entityType = EntityType.valueOf(entityTypeName);
         List<Media> medias = new ArrayList<Media>();
         HttpStatus httpStatus = null;
 
         try {
-            medias = mediaService.getByEntity(entityId, entite);
+            medias = mediaService.getByEntity(entityId, entityType);
             httpStatus = HttpStatus.OK;
         }catch (SQLException ex){
             Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
