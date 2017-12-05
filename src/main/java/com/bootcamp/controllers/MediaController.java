@@ -21,9 +21,9 @@ import java.util.logging.Logger;
 
 import org.springframework.web.multipart.MultipartFile;
 
-
+@CrossOrigin(origins = "*")
 @RestController("MediaController")
-@RequestMapping("/media")
+@RequestMapping("/medias")
 @Api(value = "Media API", description = "Media API")
 public class MediaController {
 
@@ -35,6 +35,7 @@ public class MediaController {
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
     public ResponseEntity<Media> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId,  @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
+        
         Media id = mediaService.saveFile(file, entityId, entityType);
 
         return new ResponseEntity<>(id, HttpStatus.OK);
@@ -59,7 +60,7 @@ public class MediaController {
         return new ResponseEntity<Media>(media, httpStatus);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/")
+    @RequestMapping(method = RequestMethod.GET)
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read all media", notes = "Read all media")
     public ResponseEntity<List<Media>> read() {

@@ -27,6 +27,8 @@ public class MediaService implements DatabaseConstants {
     DiskStorageService diskStorageService;
 
     public void create(Media media) throws SQLException {
+        media.setDateCreation(System.currentTimeMillis());
+        media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.create(media);
     }
 
@@ -41,6 +43,7 @@ public class MediaService implements DatabaseConstants {
     }
 
     public void update(Media media) throws SQLException {
+         media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.update(media);
     }
 
