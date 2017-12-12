@@ -176,7 +176,7 @@
                         <filtering>true</filtering>
                     </resource>
                     <resource>
-                        <directory>${config.home}</directory>
+                        <directory>src/main/resources/local</directory>
                     </resource>
 
                 </resources>
@@ -193,7 +193,7 @@
                         <filtering>true</filtering>
                     </resource>
                     <resource>
-                        <directory>${config.home}</directory>
+                        <directory>src/main/resources/dev</directory>
                     </resource>
 
                 </resources>
