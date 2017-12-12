@@ -1,20 +1,22 @@
 package com.bootcamp.services;
 
 import com.bootcamp.commons.constants.DatabaseConstants;
-import com.bootcamp.commons.enums.EntityType;
 import com.bootcamp.commons.models.Criteria;
 import com.bootcamp.commons.models.Criterias;
 import com.bootcamp.commons.models.Rule;
 import com.bootcamp.crud.MediaCRUD;
 import com.bootcamp.entities.Media;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -22,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Component
 public class MediaService implements DatabaseConstants {
+
+    @Value("${media.location}")
+    String mediaDirectory;
 
     @Autowired
     DiskStorageService diskStorageService;
@@ -31,7 +36,6 @@ public class MediaService implements DatabaseConstants {
         media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.create(media);
     }
-
 
     public Media saveFile(MultipartFile file, int entityId, String entityType) throws SQLException, IOException {
         Media media = diskStorageService.save(file);
@@ -43,7 +47,7 @@ public class MediaService implements DatabaseConstants {
     }
 
     public void update(Media media) throws SQLException {
-         media.setDateMiseAJour(System.currentTimeMillis());
+        media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.update(media);
     }
 
@@ -74,4 +78,8 @@ public class MediaService implements DatabaseConstants {
         return MediaCRUD.read(criterias);
     }
 
+    public OutputStream getFile(String internalName) throws SQLException, FileNotFoundException {
+        OutputStream file = new FileOutputStream(mediaDirectory + internalName);
+        return file;
+    }
 }

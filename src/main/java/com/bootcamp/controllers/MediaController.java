@@ -1,18 +1,20 @@
 package com.bootcamp.controllers;
 
-import com.bootcamp.commons.enums.EntityType;
 import com.bootcamp.entities.Media;
 import com.bootcamp.services.MediaService;
 import com.bootcamp.version.ApiVersions;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.File;
+import java.io.FileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +32,11 @@ public class MediaController {
     @Autowired
     MediaService mediaService;
 
-
     @RequestMapping(method = RequestMethod.POST, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
-    public ResponseEntity<Media> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId,  @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
-        
+    public ResponseEntity<Media> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId, @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
+
         Media id = mediaService.saveFile(file, entityId, entityType);
 
         return new ResponseEntity<>(id, HttpStatus.OK);
@@ -81,7 +82,7 @@ public class MediaController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
-    @ApiOperation(value = "Read a comments", notes = "Read a comments")
+    @ApiOperation(value = "Read a medias", notes = "Read a medias")
     public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) {
         List<Media> medias = new ArrayList<Media>();
         HttpStatus httpStatus = null;
@@ -95,5 +96,27 @@ public class MediaController {
         }
 
         return new ResponseEntity<List<Media>>(medias, httpStatus);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName}")
+    @ApiVersions({"1.0"})
+    @ApiOperation(value = "Get a media location", notes = "Get a media location")
+    public ResponseEntity<OutputStream> getMedia(@PathVariable("internalName") String internalName) {
+
+        OutputStream file = null;
+        HttpStatus httpStatus = null;
+
+        try {
+            file = mediaService.getFile(internalName);
+
+            httpStatus = HttpStatus.OK;
+        } catch (SQLException ex) {
+            Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return new ResponseEntity<>(file, httpStatus);
     }
 }

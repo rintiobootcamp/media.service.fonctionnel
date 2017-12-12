@@ -21,17 +21,20 @@ public class DiskStorageService implements Storage {
     @Value("${media.location}")
     String mediaDirectory;
 
+    @Value("${media.app.url}")
+    String mediaUrl;
+
     @Override
     public Media save(MultipartFile file) throws IOException {
         Media media = new Media();
         media.setOriginalName(file.getOriginalFilename());
         media.setInternalName(this.getInternalFilename(file.getOriginalFilename()));
         media.setType(file.getContentType());
-        media.setLien(mediaDirectory+media.getInternalName());
+        media.setLien(mediaUrl+media.getInternalName());
         media.setDateCreation(System.currentTimeMillis());
         media.setDateMiseAJour(System.currentTimeMillis());
         
-        File savedFile = new File(media.getLien());
+        File savedFile = new File(mediaDirectory+media.getInternalName());
         file.transferTo(savedFile);
         return media;
     }
