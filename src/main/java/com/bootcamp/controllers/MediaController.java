@@ -13,13 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -101,22 +105,20 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Get a media location", notes = "Get a media location")
-    public ResponseEntity<OutputStream> getMedia(@PathVariable("internalName") String internalName) {
+    public ResponseEntity<ByteArrayResource> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, IOException {
 
-        OutputStream file = null;
+        File file = null;
         HttpStatus httpStatus = null;
 
-        try {
-            file = mediaService.getFile(internalName);
+        file = mediaService.getFile(internalName);
 
-            httpStatus = HttpStatus.OK;
-        } catch (SQLException ex) {
-            Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MediaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
-        return new ResponseEntity<>(file, httpStatus);
+        return ResponseEntity.ok()
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
+
     }
 }

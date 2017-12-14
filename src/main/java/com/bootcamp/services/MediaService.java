@@ -6,6 +6,7 @@ import com.bootcamp.commons.models.Criterias;
 import com.bootcamp.commons.models.Rule;
 import com.bootcamp.crud.MediaCRUD;
 import com.bootcamp.entities.Media;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -78,8 +79,8 @@ public class MediaService implements DatabaseConstants {
         return MediaCRUD.read(criterias);
     }
 
-    public OutputStream getFile(String internalName) throws SQLException, FileNotFoundException {
-        OutputStream file = new FileOutputStream(mediaDirectory + internalName);
+    public File getFile(String internalName) throws FileNotFoundException {
+        File file = new File(mediaDirectory + internalName);
         return file;
     }
 }
