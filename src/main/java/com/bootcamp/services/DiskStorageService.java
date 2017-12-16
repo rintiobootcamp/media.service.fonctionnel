@@ -24,6 +24,13 @@ public class DiskStorageService implements Storage {
     @Value("${media.app.url}")
     String mediaUrl;
 
+    /**
+     * Save a media file
+     *
+     * @param file
+     * @return the created media entity
+     * @throws IOException
+     */
     @Override
     public Media save(MultipartFile file) throws IOException {
         Media media = new Media();
@@ -39,6 +46,9 @@ public class DiskStorageService implements Storage {
         return media;
     }
 
+    /**
+     *
+     */
     @Override
     public void delete() {
 

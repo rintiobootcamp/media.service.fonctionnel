@@ -5,8 +5,13 @@ package com.bootcamp.utils;
  */
 public class MediaAppUtils {
 
-    public static String generateFileName(){
+    /**
+     * Generate a unique name for the media
+     *
+     * @return the generate name
+     */
+    public static String generateFileName() {
         long time = System.currentTimeMillis();
-        return time+"";
+        return time + "";
     }
 }
