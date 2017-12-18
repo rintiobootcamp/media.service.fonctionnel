@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -142,11 +143,11 @@ public class MediaController {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName}")
+    @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName:.+}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Get a media location", notes = "Get a media location")
     public ResponseEntity<ByteArrayResource> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, IOException {
-
+        LogManager.getLogger(MediaController.class).debug(internalName);
         File file = null;
         HttpStatus httpStatus = null;
 
