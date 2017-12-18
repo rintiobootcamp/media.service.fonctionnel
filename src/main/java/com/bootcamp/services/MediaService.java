@@ -8,9 +8,7 @@ import com.bootcamp.crud.MediaCRUD;
 import com.bootcamp.entities.Media;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.springframework.stereotype.Component;
 
@@ -32,12 +30,29 @@ public class MediaService implements DatabaseConstants {
     @Autowired
     DiskStorageService diskStorageService;
 
+    /**
+     * Insert the media entity in the database
+     *
+     * @param media
+     * @throws SQLException
+     */
     public void create(Media media) throws SQLException {
         media.setDateCreation(System.currentTimeMillis());
         media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.create(media);
     }
 
+    /**
+     * Save a media file attached to a specify entity and create the media
+     * entity mapping the file
+     *
+     * @param file
+     * @param entityId
+     * @param entityType
+     * @return the media entity
+     * @throws SQLException
+     * @throws IOException
+     */
     public Media saveFile(MultipartFile file, int entityId, String entityType) throws SQLException, IOException {
         Media media = diskStorageService.save(file);
         media.setEntityType(entityType);
@@ -47,11 +62,24 @@ public class MediaService implements DatabaseConstants {
         return media;
     }
 
+    /**
+     * Update a media entity in the database
+     *
+     * @param media
+     * @throws SQLException
+     */
     public void update(Media media) throws SQLException {
         media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.update(media);
     }
 
+    /**
+     * Delete a media entity in the database
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public Media delete(int id) throws SQLException {
         Media media = read(id);
         MediaCRUD.delete(media);
@@ -59,6 +87,13 @@ public class MediaService implements DatabaseConstants {
         return media;
     }
 
+    /**
+     * Get a media entity in the database knowing its id
+     *
+     * @param id
+     * @return the media entity
+     * @throws SQLException
+     */
     public Media read(int id) throws SQLException {
         Criterias criterias = new Criterias();
         criterias.addCriteria(new Criteria("id", "=", id));
@@ -67,10 +102,24 @@ public class MediaService implements DatabaseConstants {
         return medias.get(0);
     }
 
+    /**
+     * Get all the medias entity in the database
+     *
+     * @return the medias list
+     * @throws SQLException
+     */
     public List<Media> getAll() throws SQLException {
         return MediaCRUD.read();
     }
 
+    /**
+     * Get in the database all the medias entity of a specify entity
+     *
+     * @param entityId
+     * @param entityType
+     * @return the medias list
+     * @throws SQLException
+     */
     public List<Media> getByEntity(int entityId, String entityType) throws SQLException {
         Criterias criterias = new Criterias();
         criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
@@ -79,6 +128,13 @@ public class MediaService implements DatabaseConstants {
         return MediaCRUD.read(criterias);
     }
 
+    /**
+     * Get the media file of mapping a media entity
+     *
+     * @param internalName
+     * @return the media file
+     * @throws FileNotFoundException
+     */
     public File getFile(String internalName) throws FileNotFoundException {
         File file = new File(mediaDirectory + internalName);
         return file;

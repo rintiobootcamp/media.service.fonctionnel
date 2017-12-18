@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,11 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ *
+ * @author Bello
+ */
 @CrossOrigin(origins = "*")
 @RestController("MediaController")
 @RequestMapping("/medias")
@@ -36,6 +40,16 @@ public class MediaController {
     @Autowired
     MediaService mediaService;
 
+    /**
+     * Save a media file
+     *
+     * @param file
+     * @param entityId
+     * @param entityType
+     * @return the media entity containing the file link
+     * @throws SQLException
+     * @throws IOException
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
@@ -46,6 +60,12 @@ public class MediaController {
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
+    /**
+     * Get a media entity knowing its id
+     *
+     * @param id
+     * @return the media entity
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a media", notes = "Read a media")
@@ -65,6 +85,11 @@ public class MediaController {
         return new ResponseEntity<Media>(media, httpStatus);
     }
 
+    /**
+     * Get all the medias entity in the database
+     *
+     * @return medias list
+     */
     @RequestMapping(method = RequestMethod.GET)
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read all media", notes = "Read all media")
@@ -84,6 +109,14 @@ public class MediaController {
         return new ResponseEntity<List<Media>>(medias, httpStatus);
     }
 
+    /**
+     * Get all the medias entity in the database of a specify entity knowing
+     * this entity type and id
+     *
+     * @param entityId
+     * @param entityType
+     * @return medias list
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a medias", notes = "Read a medias")
@@ -102,11 +135,19 @@ public class MediaController {
         return new ResponseEntity<List<Media>>(medias, httpStatus);
     }
 
+    /**
+     * Get the download link of a media file
+     *
+     * @param internalName
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName:.+}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Get a media location", notes = "Get a media location")
     public ResponseEntity<ByteArrayResource> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, IOException {
-
+        LogManager.getLogger(MediaController.class).debug(internalName);
         File file = null;
         HttpStatus httpStatus = null;
 
