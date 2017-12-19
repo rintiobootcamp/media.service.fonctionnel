@@ -36,6 +36,7 @@ import java.util.List;
  * specific database has been created and all it's tables. If you have data in
  * the table,make sure that before creating a data with it's id, do not use an
  * existing id.
+ * <b>Note: you have to the location of the media in your project properties</b>
  * </p>
  */
 public class MediaControllerIntegrationTest {
@@ -62,20 +63,13 @@ public class MediaControllerIntegrationTest {
     private int mediaId = 0;
     private String mediaInternalName = "";
 
-
-    /* @BeforeTest
-    public void count() throws Exception{
-       int totalData = new MediaService().getCountMedias();
-       mediaId=totalData;
-       logger.info( mediaId );
-   }*/
     /**
      * This method create a new media with the given id
      *
      * @see Media#id
      * <b>you have to chenge the name of the media if this name already exists
      * in the database
-     * @see Media#getNom() else, the media will be created but not wiht the
+     * @see Media#getEntityType() else, the media will be created but not wiht the
      * given ID. and this will accure an error in the getById and update
      * method</b>
      * Note that this method will be the first to execute If every done , it
@@ -85,18 +79,19 @@ public class MediaControllerIntegrationTest {
     @Test(priority = 0, groups = {"MediaTest"})
     public void createMedia() throws Exception {
         String createURI = BASE_URI + MEDIA_PATH + "/PROJET/7";
-        File dataFile = getFile("data-json" + File.separator + "poing.png");
+        File dataFile = getFile("data-json" + File.separator + "poing.png").getAbsoluteFile();
+
+
         Gson gson = new Gson();
-        
         Response response = given()
                 .log().all()
-                .multiPart(dataFile)
+                .multiPart( dataFile )
                 .expect()
                 .when()
                 .post(createURI);
+        mediaId = gson.fromJson( response.getBody().print(),Media.class ).getId();
 
-        mediaId = gson.fromJson(response.getBody().print(), Media.class).getId();
-        mediaInternalName = gson.fromJson(response.getBody().print(), Media.class).getInternalName();
+       mediaInternalName = gson.fromJson(response.getBody().print(), Media.class).getInternalName();
 
         logger.debug(mediaId);
         logger.debug(response.getBody().prettyPrint());
