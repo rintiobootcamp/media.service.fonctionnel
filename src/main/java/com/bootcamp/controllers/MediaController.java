@@ -69,7 +69,7 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a media", notes = "Read a media")
-    public ResponseEntity<Media> read(@PathVariable(name = "id") int id) {
+    public ResponseEntity<Media> read(@PathVariable(name = "id") int id) throws Exception {
 
         Media media = new Media();
         HttpStatus httpStatus = null;
@@ -93,7 +93,7 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET)
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read all media", notes = "Read all media")
-    public ResponseEntity<List<Media>> read() {
+    public ResponseEntity<List<Media>> read() throws Exception {
 
         List<Media> medias = new ArrayList<Media>();
         HttpStatus httpStatus = null;
@@ -120,7 +120,7 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a medias", notes = "Read a medias")
-    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) {
+    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) throws Exception{
         List<Media> medias = new ArrayList<Media>();
         HttpStatus httpStatus = null;
 

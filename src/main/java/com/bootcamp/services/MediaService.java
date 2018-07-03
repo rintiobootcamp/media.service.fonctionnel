@@ -5,15 +5,21 @@ import com.bootcamp.commons.models.Criteria;
 import com.bootcamp.commons.models.Criterias;
 import com.bootcamp.commons.models.Rule;
 import com.bootcamp.crud.MediaCRUD;
+import com.bootcamp.entities.Censure;
 import com.bootcamp.entities.Media;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.rintio.elastic.client.ElasticClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,7 +86,7 @@ public class MediaService implements DatabaseConstants {
      * @return
      * @throws SQLException
      */
-    public Media delete(int id) throws SQLException {
+    public Media delete(int id) throws Exception {
         Media media = read(id);
         MediaCRUD.delete(media);
 
@@ -94,12 +100,13 @@ public class MediaService implements DatabaseConstants {
      * @return the media entity
      * @throws SQLException
      */
-    public Media read(int id) throws SQLException {
-        Criterias criterias = new Criterias();
-        criterias.addCriteria(new Criteria("id", "=", id));
-        List<Media> medias = MediaCRUD.read(criterias);
+    public Media read(int id) throws Exception {
+//        Criterias criterias = new Criterias();
+//        criterias.addCriteria(new Criteria("id", "=", id));
+//        List<Media> medias = MediaCRUD.read(criterias);
 
-        return medias.get(0);
+//        return medias.get(0);
+        return getAllMediaIndex().stream().filter(t->t.getId()==id).findFirst().get();
     }
 
     /**
@@ -108,8 +115,19 @@ public class MediaService implements DatabaseConstants {
      * @return the medias list
      * @throws SQLException
      */
-    public List<Media> getAll() throws SQLException {
-        return MediaCRUD.read();
+    public List<Media> getAll() throws Exception {
+        return getAllMediaIndex();
+    }
+
+    public List<Media> getAllMediaIndex() throws Exception{
+        ElasticClient elasticClient = new ElasticClient();
+        List<Object> objects = elasticClient.getAllObject("medias");
+        ModelMapper modelMapper = new ModelMapper();
+        List<Media> rest = new ArrayList<>();
+        for(Object obj:objects){
+            rest.add(modelMapper.map(obj,Media.class));
+        }
+        return rest;
     }
 
     /**
@@ -120,12 +138,12 @@ public class MediaService implements DatabaseConstants {
      * @return the medias list
      * @throws SQLException
      */
-    public List<Media> getByEntity(int entityId, String entityType) throws SQLException {
-        Criterias criterias = new Criterias();
-        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
-        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
-
-        return MediaCRUD.read(criterias);
+    public List<Media> getByEntity(int entityId, String entityType) throws Exception {
+//        Criterias criterias = new Criterias();
+//        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
+//        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
+//        return MediaCRUD.read(criterias);
+        return getAllMediaIndex().stream().filter(t->t.getEntityType().equals(entityType)).filter(t->t.getEntityId()==entityId).collect(Collectors.toList());
     }
 
     /**
