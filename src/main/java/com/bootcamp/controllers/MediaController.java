@@ -40,6 +40,17 @@ public class MediaController {
     @Autowired
     MediaService mediaService;
 
+
+    @RequestMapping(value = "/elasticdata",method = RequestMethod.GET)
+    @ApiVersions({"1.0"})
+    @ApiOperation(value = "Create Elasticsearch indexes", notes = "Create Elasticsearch indexes")
+    public ResponseEntity<String> createIndexs() throws Exception {
+        String retour = "NOT DONE";
+        if (mediaService.createAllIndexMedia())
+            retour = "DONE";
+        return new ResponseEntity<>(retour, HttpStatus.OK);
+    }
+
     /**
      * Save a media file
      *
@@ -53,7 +64,7 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.POST, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Save a new media file", notes = "Save a new media file")
-    public ResponseEntity<Media> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId, @PathVariable(name = "entityType") String entityType) throws SQLException, IOException {
+    public ResponseEntity<Media> create(@RequestParam("file") MultipartFile file, @PathVariable(name = "entityId") int entityId, @PathVariable(name = "entityType") String entityType) throws SQLException, Exception {
 
         Media id = mediaService.saveFile(file, entityId, entityType);
 

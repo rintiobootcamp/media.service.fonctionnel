@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by darextossa on 11/27/17.
  */
@@ -35,6 +37,12 @@ public class MediaService implements DatabaseConstants {
 
     @Autowired
     DiskStorageService diskStorageService;
+    ElasticClient elasticClient ;
+
+    @PostConstruct
+    public void init(){
+        elasticClient = new ElasticClient();
+    }
 
     /**
      * Insert the media entity in the database
@@ -42,10 +50,11 @@ public class MediaService implements DatabaseConstants {
      * @param media
      * @throws SQLException
      */
-    public void create(Media media) throws SQLException {
+    public void create(Media media) throws Exception {
         media.setDateCreation(System.currentTimeMillis());
         media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.create(media);
+        createAllIndexMedia();
     }
 
     /**
@@ -59,7 +68,7 @@ public class MediaService implements DatabaseConstants {
      * @throws SQLException
      * @throws IOException
      */
-    public Media saveFile(MultipartFile file, int entityId, String entityType) throws SQLException, IOException {
+    public Media saveFile(MultipartFile file, int entityId, String entityType) throws SQLException, Exception {
         Media media = diskStorageService.save(file);
         media.setEntityType(entityType);
         media.setEntityId(entityId);
@@ -74,9 +83,10 @@ public class MediaService implements DatabaseConstants {
      * @param media
      * @throws SQLException
      */
-    public void update(Media media) throws SQLException {
+    public void update(Media media) throws Exception {
         media.setDateMiseAJour(System.currentTimeMillis());
         MediaCRUD.update(media);
+        createAllIndexMedia();
     }
 
     /**
@@ -89,6 +99,7 @@ public class MediaService implements DatabaseConstants {
     public Media delete(int id) throws Exception {
         Media media = read(id);
         MediaCRUD.delete(media);
+        createAllIndexMedia();
 
         return media;
     }
@@ -143,7 +154,7 @@ public class MediaService implements DatabaseConstants {
 //        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
 //        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
 //        return MediaCRUD.read(criterias);
-        return getAllMediaIndex().stream().filter(t->t.getEntityType().equals(entityType)).filter(t->t.getEntityId()==entityId).collect(Collectors.toList());
+        return getAllMediaIndex().stream().filter(t->t.getEntityType().equals(entityType) && t.getEntityId()==entityId).collect(Collectors.toList());
     }
 
     /**
@@ -157,4 +168,15 @@ public class MediaService implements DatabaseConstants {
         File file = new File(mediaDirectory + internalName);
         return file;
     }
+
+    public boolean createAllIndexMedia()throws Exception{
+//        ElasticClient elasticClient = new ElasticClient();
+        List<Media> medias = MediaCRUD.read();
+        for (Media media : medias){
+            elasticClient.creerIndexObjectNative("medias","media",media,media.getId());
+//            LOG.info("pilier "+pilier.getNom()+" created");
+        }
+        return true;
+    }
+
 }
