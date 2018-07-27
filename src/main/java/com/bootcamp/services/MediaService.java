@@ -154,7 +154,8 @@ public class MediaService implements DatabaseConstants {
 //        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
 //        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
 //        return MediaCRUD.read(criterias);
-        return getAllMediaIndex().stream().filter(t->t.getEntityType().equalsIgnoreCase(entityType) && t.getEntityId()==entityId).collect(Collectors.toList());
+        return getAllMediaIndex().stream().filter(t->t.getEntityType().equalsIgnoreCase(entityType)).collect(Collectors.toList())
+                .stream().filter(o->o.getEntityId()==entityId).collect(Collectors.toList());
     }
 
     /**
