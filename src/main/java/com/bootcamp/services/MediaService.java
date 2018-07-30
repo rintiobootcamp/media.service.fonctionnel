@@ -7,14 +7,18 @@ import com.bootcamp.commons.models.Rule;
 import com.bootcamp.crud.MediaCRUD;
 import com.bootcamp.entities.Censure;
 import com.bootcamp.entities.Media;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import java.io.*;
 
 import com.rintio.elastic.client.ElasticClient;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -165,8 +169,36 @@ public class MediaService implements DatabaseConstants {
      * @return the media file
      * @throws FileNotFoundException
      */
-    public File getFile(String internalName) throws FileNotFoundException {
-        File file = new File(mediaDirectory + internalName);
+    public File getFile(String internalName) throws IOException, URISyntaxException {
+//        Resource resource = new ClassPathResource(mediaDirectory + internalName);
+//        File file = resource.getFile();
+//        InputStream input = new FileInputStream(mediaDirectory + internalName);
+//        InputStream in = getClass().getResourceAsStream(mediaDirectory + internalName);
+//        ClassLoader classLoader = getClass().getClassLoader();
+//        String uri = new String(Files.readAllBytes(Paths.get(getClass().getResource(mediaDirectory + internalName).toURI())));
+
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+//        File file = new File(classLoader.getResource(mediaDirectory + internalName).getFile());
+//        File file = new File(classLoader.getResource(mediaDirectory + internalName).getFile());
+       File file = new File(mediaDirectory + internalName);
+//
+//        BufferedReader rd = null;
+//
+//        try {
+//            // Open the file for reading.
+//            rd = new BufferedReader(new FileReader(new File(mediaDirectory + internalName)));
+//            // Read all contents of the file.
+//            String inputLine = null;
+//            while((inputLine = rd.readLine()) != null)
+//            System.out.println(inputLine);
+//        }
+//        catch(IOException ex) {
+//        catch(IOException ex) {
+//            System.err.println("An IOException was caught!");
+//            ex.printStackTrace();
+//        }
+
         return file;
     }
 

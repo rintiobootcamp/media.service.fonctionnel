@@ -157,7 +157,7 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName:.+}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Get a media location", notes = "Get a media location")
-    public ResponseEntity<ByteArrayResource> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, IOException {
+    public ResponseEntity<ByteArrayResource> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, Exception {
         LogManager.getLogger(MediaController.class).debug(internalName);
         File file = null;
         HttpStatus httpStatus = null;
