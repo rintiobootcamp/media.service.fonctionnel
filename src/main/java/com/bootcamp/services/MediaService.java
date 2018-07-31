@@ -43,11 +43,19 @@ public class MediaService implements DatabaseConstants {
     DiskStorageService diskStorageService;
     ElasticClient elasticClient ;
 
+    private List<Media> medias;
+
     @PostConstruct
     public void init(){
         elasticClient = new ElasticClient();
+        this.medias = new ArrayList<>();
     }
 
+    public List<Media> lireMedia() throws Exception{
+        if(this.medias.isEmpty())
+            getAllMediaIndex();
+        return this.medias;
+    }
     /**
      * Insert the media entity in the database
      *
@@ -121,7 +129,7 @@ public class MediaService implements DatabaseConstants {
 //        List<Media> medias = MediaCRUD.read(criterias);
 
 //        return medias.get(0);
-        return getAllMediaIndex().stream().filter(t->t.getId()==id).findFirst().get();
+        return lireMedia().stream().filter(t->t.getId()==id).findFirst().get();
     }
 
     /**
@@ -131,7 +139,7 @@ public class MediaService implements DatabaseConstants {
      * @throws SQLException
      */
     public List<Media> getAll() throws Exception {
-        return getAllMediaIndex();
+        return lireMedia();
     }
 
     public List<Media> getAllMediaIndex() throws Exception{
@@ -142,6 +150,7 @@ public class MediaService implements DatabaseConstants {
         for(Object obj:objects){
             rest.add(modelMapper.map(obj,Media.class));
         }
+        this.medias = rest;
         return rest;
     }
 
@@ -158,7 +167,7 @@ public class MediaService implements DatabaseConstants {
 //        criterias.addCriteria(new Criteria(new Rule("entityId", "=", entityId), "AND"));
 //        criterias.addCriteria(new Criteria(new Rule("entityType", "=", entityType), null));
 //        return MediaCRUD.read(criterias);
-        return getAllMediaIndex().stream().filter(t->t.getEntityType().equalsIgnoreCase(entityType)).collect(Collectors.toList())
+        return lireMedia().stream().filter(t->t.getEntityType().equalsIgnoreCase(entityType)).collect(Collectors.toList())
                 .stream().filter(o->o.getEntityId()==entityId).collect(Collectors.toList());
     }
 
