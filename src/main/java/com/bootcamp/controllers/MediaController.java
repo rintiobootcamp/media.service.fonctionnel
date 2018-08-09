@@ -5,14 +5,17 @@ import com.bootcamp.services.MediaService;
 import com.bootcamp.version.ApiVersions;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.logging.log4j.LogManager;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -28,7 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- *
  * @author Bello
  */
 @CrossOrigin(origins = "*")
@@ -41,7 +44,7 @@ public class MediaController {
     MediaService mediaService;
 
 
-    @RequestMapping(value = "/elasticdata",method = RequestMethod.GET)
+    @RequestMapping(value = "/elasticdata", method = RequestMethod.GET)
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Create Elasticsearch indexes", notes = "Create Elasticsearch indexes")
     public ResponseEntity<String> createIndexs() throws Exception {
@@ -131,7 +134,7 @@ public class MediaController {
     @RequestMapping(method = RequestMethod.GET, value = "/{entityType}/{entityId}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Read a medias", notes = "Read a medias")
-    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) throws Exception{
+    public ResponseEntity<List<Media>> readByEntity(@PathVariable("entityId") int entityId, @PathVariable("entityType") String entityType) throws Exception {
         List<Media> medias = new ArrayList<Media>();
         HttpStatus httpStatus = null;
 
@@ -154,23 +157,40 @@ public class MediaController {
      * @throws FileNotFoundException
      * @throws IOException
      */
+//    @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName:.+}")
+//    @ApiVersions({"1.0"})
+//    @ApiOperation(value = "Get a media location", notes = "Get a media location")
+//    public ResponseEntity<ByteArrayResource> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, Exception {
+//        LogManager.getLogger(MediaController.class).debug(internalName);
+//        File file = null;
+//        HttpStatus httpStatus = null;
+//
+//        file = mediaService.getFile(internalName);
+//        URL url = new URL(mediaService.getFile(internalName).getPath());
+//        FileUtils.copyURLToFile(url, file);
+//
+//        Path path = Paths.get(file.getPath());
+//        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+//        return ResponseEntity.ok()
+//                .contentLength(file.length())
+//                .contentType(MediaType.parseMediaType("application/octet-stream"))
+//                .body(resource);
+//
+//    }
     @RequestMapping(method = RequestMethod.GET, value = "/file/{internalName:.+}")
     @ApiVersions({"1.0"})
     @ApiOperation(value = "Get a media location", notes = "Get a media location")
-    public ResponseEntity<ByteArrayResource> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, Exception {
+    public ResponseEntity<String> getMedia(@PathVariable("internalName") String internalName) throws FileNotFoundException, Exception {
         LogManager.getLogger(MediaController.class).debug(internalName);
         File file = null;
         HttpStatus httpStatus = null;
-
         file = mediaService.getFile(internalName);
-
-        Path path = Paths.get(file.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-
-        return ResponseEntity.ok()
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);
-
+//        URL url = new URL(mediaService.getFile(internalName).getPath());
+//        FileUtils.copyURLToFile(url, file);
+//
+//        Path path = Paths.get(file.getPath());
+//        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+        return new ResponseEntity<>(file.getPath(), HttpStatus.OK);
     }
+
 }

@@ -14,6 +14,7 @@ import com.rintio.elastic.client.ElasticClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.net.URISyntaxException;
@@ -211,6 +212,7 @@ public class MediaService implements DatabaseConstants {
         return file;
     }
 
+    //@Scheduled(fixedDelay = 1800000, initialDelay = 900000)
     public boolean createAllIndexMedia()throws Exception{
 //        ElasticClient elasticClient = new ElasticClient();
         List<Media> medias = MediaCRUD.read();
