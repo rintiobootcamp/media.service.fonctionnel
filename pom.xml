@@ -214,6 +214,12 @@
             <groupId>com.bootcamp</groupId>
             <artifactId>db-access</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -306,6 +312,10 @@
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-web</artifactId>
                 </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
             </exclusions>
         </dependency>
     </dependencies>

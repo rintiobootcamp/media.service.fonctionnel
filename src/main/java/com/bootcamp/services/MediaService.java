@@ -212,7 +212,7 @@ public class MediaService implements DatabaseConstants {
         return file;
     }
 
-    //@Scheduled(fixedDelay = 1800000, initialDelay = 900000)
+//    @Scheduled(initialDelay = 900000)
     public boolean createAllIndexMedia()throws Exception{
 //        ElasticClient elasticClient = new ElasticClient();
         List<Media> medias = MediaCRUD.read();

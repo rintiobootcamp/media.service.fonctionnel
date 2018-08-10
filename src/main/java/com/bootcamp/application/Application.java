@@ -7,6 +7,7 @@
  */
 package com.bootcamp.application;
 
+import com.bootcamp.services.MediaService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -51,6 +52,11 @@ public class Application extends SpringBootServletInitializer {
     public static void main(String[] args) {
 
         SpringApplication.run(Application.class, args);
+        try {
+            new MediaService().createAllIndexMedia();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
